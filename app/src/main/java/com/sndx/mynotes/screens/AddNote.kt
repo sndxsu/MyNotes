@@ -19,6 +19,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.sndx.mynotes.db.DbManager
+import com.sndx.mynotes.db.Note
 
 @Composable
 fun AddNote(dbManager: DbManager){
@@ -39,6 +40,6 @@ fun AddNote(dbManager: DbManager){
 
 fun buttonClick(label:String, description:String, dbManager: DbManager){
     dbManager.openDB()
-    dbManager.addToDB(label, description)
+    dbManager.addToDB(Note(label, description, false))
     dbManager.closeDb()
 }

@@ -25,7 +25,7 @@ fun ColumnsTest(scrollState:LazyListState, dbManager: DbManager){
         Column(modifier = Modifier.padding(innerPadding)){
         LazyColumn(userScrollEnabled = true, state = scrollState){
             items(values.count()){ index ->
-                ListItem(name = values[index], prof = "test2")
+                ListItem(name = values[index].name, prof = values[index].content)
             }
         }
         }
