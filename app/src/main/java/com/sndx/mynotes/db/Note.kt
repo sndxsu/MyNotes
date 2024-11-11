@@ -1,5 +1,6 @@
 package com.sndx.mynotes.db
 
-class Note(val name:String,
+class Note(val id: Int,
+        val name:String,
            val content:String,
-           val isImportant:Boolean)
+           var isImportant:Boolean)
