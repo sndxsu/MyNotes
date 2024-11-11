@@ -28,7 +28,7 @@ fun ListItem(name: String, prof:String){
         Row (Modifier.fillMaxSize(), verticalAlignment = Alignment.CenterVertically){
             Column (horizontalAlignment = Alignment.Start,
                 modifier = Modifier
-                    .fillMaxWidth(0.9f)
+                    .fillMaxWidth(0.88f)
                     .padding(start = 10.dp, top = 5.dp, end = 5.dp)
                 ){
                 Text(text = name)

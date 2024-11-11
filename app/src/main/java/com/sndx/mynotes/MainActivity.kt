@@ -51,7 +51,6 @@ import com.sndx.mynotes.db.DbManager
 import com.sndx.mynotes.screens.AddNote
 import com.sndx.mynotes.screens.FirstScreen
 import com.sndx.mynotes.screens.SecondScreen
-import com.sndx.mynotes.screens.ThirdScreen
 import com.sndx.mynotes.screens.components.NavBarItem
 import com.sndx.mynotes.ui.theme.MyNotesTheme
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -63,7 +62,6 @@ class MainActivity : ComponentActivity() {
         val db = DbManager(this)
         setContent {
             MyNotesTheme {
-                //test comment to push
                 val view = LocalView.current
                 val colorScheme = MaterialTheme.colorScheme
                 var selectedItemIndex by rememberSaveable{  mutableStateOf(0) }
@@ -87,12 +85,6 @@ class MainActivity : ComponentActivity() {
                             title = "Important",
                             selectedIcon = Icons.Filled.List,
                             unselectedIcon = Icons.Outlined.List,
-                            hasNews = false
-                        ),
-                        NavBarItem(
-                            title = "Settings",
-                            selectedIcon = Icons.Filled.Settings,
-                            unselectedIcon = Icons.Outlined.Settings,
                             hasNews = false
                         )
                     )
@@ -163,17 +155,12 @@ class MainActivity : ComponentActivity() {
                         }
                         NavHost(navController = navController, startDestination = items[0].title){
                             composable(route = items[0].title){
-                                FirstScreen(scrollState, db)
+                                FirstScreen(scrollState, db, innerPadding)
                                 BackHandler(enabled = true) {}
                                 showFAB = true
                             }
                             composable(route = items[1].title){
                                 SecondScreen()
-                                BackHandler(enabled = true) {}
-                                showFAB = false
-                            }
-                            composable(route = items[2].title){
-                                ThirdScreen()
                                 BackHandler(enabled = true) {}
                                 showFAB = false
                             }

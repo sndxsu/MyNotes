@@ -1,6 +1,7 @@
 package com.sndx.mynotes.screens
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -11,7 +12,7 @@ import com.sndx.mynotes.db.DbManager
 import com.sndx.mynotes.screens.components.ListItem
 
 @Composable
-fun FirstScreen(scrollState:LazyListState, dbManager: DbManager) {
+fun FirstScreen(scrollState:LazyListState, dbManager: DbManager, innerPadding: PaddingValues) {
     ColumnsTest(scrollState, dbManager)
 }
 

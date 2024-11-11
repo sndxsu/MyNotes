@@ -8,6 +8,6 @@ import com.sndx.mynotes.screens.components.ListItem
 @Composable
 fun SecondScreen() {
     Row {
-        ListItem("huy pizda", "ne actor")
+        ListItem("test note", "ne actor")
     }
 }
