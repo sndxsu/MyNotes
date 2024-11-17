@@ -7,8 +7,9 @@ import android.database.sqlite.SQLiteDatabase
 import android.provider.BaseColumns
 
 fun Boolean.toInt() = if (this) 1 else 0
+fun Int.toBoolean() = this == 1
 
-class DbManager(private val context: Context) {
+class DbManager(context: Context) {
     private val dbHelper = DbHelper(context)
     private var db: SQLiteDatabase? = null
 
@@ -31,7 +32,7 @@ class DbManager(private val context: Context) {
     fun updateNote(note: Note){
         openDB()
         val contentValues = ContentValues().apply {
-            put(DbNames.COLUMN_NAME_TITLE, "test!")
+            put(DbNames.COLUMN_NAME_TITLE, note.name)
             put(DbNames.COLUMN_NAME_CONTENT, note.content)
             put(DbNames.COLUMN_NAME_IMPORTANT, note.isImportant.toInt())
         }
@@ -50,10 +51,12 @@ class DbManager(private val context: Context) {
                 val dataText = cursor?.getString(cursor.getColumnIndex(DbNames.COLUMN_NAME_TITLE))
                 val description = cursor?.getString(cursor.getColumnIndex(DbNames.COLUMN_NAME_CONTENT))
                 val important = cursor?.getString(cursor.getColumnIndex(DbNames.COLUMN_NAME_IMPORTANT))
-                if (dataText != null && description != null) {
-                    if (id != null) {
-                        dataList.add(Note(id.toInt(), dataText, description, important.toBoolean()))
-                    }
+
+                if (dataText != null
+                    && description != null
+                    && important != null
+                    && id != null) {
+                    dataList.add(Note(id.toInt(), dataText, description, important.toInt().toBoolean()))
                 }
             }
         }

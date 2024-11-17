@@ -1,5 +1,4 @@
 package com.sndx.mynotes.screens.components
-
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,10 +23,12 @@ import androidx.compose.ui.unit.dp
 import com.sndx.mynotes.db.Note
 
 @Composable
-
-fun ListItem(note: Note){
+fun ListItem(note: Note,
+             onClick: () -> Unit  //передається метод зберігання даних в дб
+){
     var isFavorite by remember { mutableStateOf(note.isImportant) }
-    val icon = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder
+    val icon = if (isFavorite)
+        Icons.Default.Favorite else Icons.Default.FavoriteBorder
     Card (
         Modifier
             .fillMaxWidth()
@@ -48,7 +49,7 @@ fun ListItem(note: Note){
                     isFavorite = !isFavorite
                     note.isImportant = isFavorite
                     println("${note.isImportant}, $isFavorite")
-                    buttonAddImportant(note)
+                    onClick()
                 }
             ) {
                 Icon(
@@ -58,8 +59,4 @@ fun ListItem(note: Note){
             }
         }
     }
-}
-
-fun buttonAddImportant(note: Note){
-    //todo
 }

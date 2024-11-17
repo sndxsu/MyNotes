@@ -21,11 +21,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.sndx.mynotes.db.DbManager
-import com.sndx.mynotes.db.Note
+
 
 @Composable
-fun AddNote(dbManager: DbManager){ //todo: move dbManager to main class
+fun AddNote(onclick: (label: String, description: String) -> Unit){
     var labelText by remember{ mutableStateOf("")}
     var descriptionText by remember{ mutableStateOf("")}
     val paddingVal = 5.dp
@@ -39,13 +38,9 @@ fun AddNote(dbManager: DbManager){ //todo: move dbManager to main class
         })
         TextField(modifier = Modifier.fillMaxWidth().height(200.dp), value = descriptionText, onValueChange = {descriptionText = it},
             label = {Text("Description")})
-        Button(onClick = { buttonClick(labelText, descriptionText, dbManager) }, modifier = Modifier.padding(paddingVal), shape = RoundedCornerShape(paddingVal)) {
+        Button(onClick = {
+            onclick(labelText, descriptionText)
+        }, modifier = Modifier.padding(paddingVal), shape = RoundedCornerShape(paddingVal)) {
             Text("Add note...")
         }}
     }}
-
-fun buttonClick(label:String, description:String, dbManager: DbManager){
-    dbManager.openDB()
-    dbManager.addToDB(Note(0, label, description, false))
-    dbManager.closeDb()
-}

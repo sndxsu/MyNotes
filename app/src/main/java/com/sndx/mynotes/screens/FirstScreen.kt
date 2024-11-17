@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -12,23 +11,21 @@ import com.sndx.mynotes.db.DbManager
 import com.sndx.mynotes.screens.components.ListItem
 
 @Composable
-fun FirstScreen(scrollState:LazyListState, dbManager: DbManager, innerPadding: PaddingValues) {
-    ColumnsTest(scrollState, dbManager)
-}
-
-
-@Composable
-fun ColumnsTest(scrollState:LazyListState, dbManager: DbManager){
+fun FirstScreen(dbManager: DbManager, innerPadding: PaddingValues) {
     dbManager.openDB()
     val values = dbManager.readDbData()
     dbManager.closeDb()
-    Scaffold {innerPadding->
+    Scaffold {padding ->
         Column(modifier = Modifier.padding(innerPadding)){
-        LazyColumn(userScrollEnabled = true, state = scrollState){
-            items(values.count()){ index ->
-                ListItem(values[index])
+            LazyColumn(userScrollEnabled = true, contentPadding = innerPadding){
+                items(values.count()){ index ->
+                    ListItem(values[index], onClick = {
+                        dbManager.openDB()
+                        dbManager.updateNote(values[index])
+                        dbManager.closeDb()
+                    })
+                }
             }
-        }
         }
     }
 }

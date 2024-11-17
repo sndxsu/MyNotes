@@ -6,7 +6,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
@@ -17,10 +16,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.List
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.List
-import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -30,10 +27,10 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -48,13 +45,19 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.sndx.mynotes.db.DbManager
+import com.sndx.mynotes.db.Note
 import com.sndx.mynotes.screens.AddNote
 import com.sndx.mynotes.screens.FirstScreen
 import com.sndx.mynotes.screens.SecondScreen
 import com.sndx.mynotes.screens.components.NavBarItem
 import com.sndx.mynotes.ui.theme.MyNotesTheme
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.map
+
+//todo:
+// fix scroll
+// make important screen
+// make editing screen
+// fix keyboard in AddNote screen
+// 50/50: make FirstScreen without inserting db there
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,9 +67,9 @@ class MainActivity : ComponentActivity() {
             MyNotesTheme {
                 val view = LocalView.current
                 val colorScheme = MaterialTheme.colorScheme
-                var selectedItemIndex by rememberSaveable{  mutableStateOf(0) }
+                var selectedItemIndex by rememberSaveable{  mutableIntStateOf(0) }
                 var showFAB by remember { mutableStateOf(true) }
-                val scrollState = rememberLazyListState()
+//                val scrollState = rememberLazyListState()
                 var isNavbarVisible by remember { mutableStateOf(true) }
                 var previousIndex = 1
                 Surface(
@@ -78,15 +81,11 @@ class MainActivity : ComponentActivity() {
                         NavBarItem(
                             title = "Notes",
                             selectedIcon = Icons.Filled.Favorite,
-                            unselectedIcon = Icons.Outlined.Favorite,
-                            hasNews = false
-                        ),
+                            unselectedIcon = Icons.Outlined.Favorite),
                         NavBarItem(
                             title = "Important",
                             selectedIcon = Icons.Filled.List,
-                            unselectedIcon = Icons.Outlined.List,
-                            hasNews = false
-                        )
+                            unselectedIcon = Icons.Outlined.List)
                     )
                     val navController = rememberNavController()
                     Scaffold(bottomBar = {
@@ -132,15 +131,15 @@ class MainActivity : ComponentActivity() {
                         },
                         floatingActionButtonPosition = FabPosition.End
                     ){innerPadding ->
-                        LaunchedEffect(scrollState) {
-                            snapshotFlow { scrollState.firstVisibleItemIndex }
-                                .map { scrollState.firstVisibleItemScrollOffset }
-                                .distinctUntilChanged()
-                                .collect {
-                                    isNavbarVisible = scrollState.firstVisibleItemIndex < previousIndex
-                                    previousIndex = scrollState.firstVisibleItemIndex
-                                }
-                        }
+//                        LaunchedEffect(scrollState) {
+//                            snapshotFlow { scrollState.firstVisibleItemIndex }
+//                                .map { scrollState.firstVisibleItemScrollOffset }
+//                                .distinctUntilChanged()
+//                                .collect {
+//                                    isNavbarVisible = scrollState.firstVisibleItemIndex < previousIndex
+//                                    previousIndex = scrollState.firstVisibleItemIndex
+//                                }
+//                        }
                         val window = (view.context as Activity).window
                         val windowInsetsController = remember {
                             WindowCompat.getInsetsController(window, view)
@@ -155,7 +154,8 @@ class MainActivity : ComponentActivity() {
                         }
                         NavHost(navController = navController, startDestination = items[0].title){
                             composable(route = items[0].title){
-                                FirstScreen(scrollState, db, innerPadding)
+//                                FirstScreen(scrollState, db, innerPadding)
+                                FirstScreen(db, innerPadding)
                                 BackHandler(enabled = true) {}
                                 showFAB = true
                             }
@@ -165,7 +165,12 @@ class MainActivity : ComponentActivity() {
                                 showFAB = false
                             }
                             composable("add_note"){
-                                AddNote(db)
+                                AddNote(onclick = {label, description ->
+                                    val note = Note(0, label, description, false)
+                                    db.openDB()
+                                    db.addToDB(note)
+                                    db.closeDb()
+                                })
                                 showFAB = false
                                 BackHandler(onBack = {
                                     isNavbarVisible = true
